@@ -11,8 +11,8 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class UserLogin {
-    @NotBlank(message = "Please enter the username!")
-    private String username;
-    @NotBlank(message = "Please enter the username!")
+    @NotBlank(message = "Please enter email!")
+    private String email;
+    @NotBlank(message = "Please enter the password!")
     private String password;
 }
