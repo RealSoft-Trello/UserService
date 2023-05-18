@@ -13,15 +13,13 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class UserRequest {
-    @NotBlank(message = "Username can not be blank!")
-    private String username;
-    @Size(max = 40)
-    private String name;
+    @Size(max = 20)
+    private String firstname;
+    @Size(max = 20)
+    private String lastname;
     @NotBlank(message = "Password should not be blank!")
     private String password;
     @NotBlank(message = "Email can't be empty!")
     @Email
     private String email;
-    @NotBlank(message = "You did not enter the role for this user!")
-    private String roleName;
 }
