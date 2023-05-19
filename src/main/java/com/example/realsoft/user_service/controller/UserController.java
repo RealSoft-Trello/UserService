@@ -1,5 +1,6 @@
 package com.example.realsoft.user_service.controller;
 
+import com.example.realsoft.user_service.model.Board;
 import com.example.realsoft.user_service.exception.ResourceNotFound;
 import com.example.realsoft.user_service.model.UserRequest;
 import com.example.realsoft.user_service.model.UserResponse;
@@ -36,5 +37,10 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable(name = "id") Long userId) throws ResourceNotFound {
         userService.deleteUser(userId);
         return ResponseEntity.ok("User deleted successfully!");
+    }
+
+    @GetMapping("/{id}/boards" )
+    public ResponseEntity<List<Board>> getBoardsById(@PathVariable(name = "id" ) Long userId) throws ResourceNotFound {
+        return ResponseEntity.ok(userService.getBoardsById(userId));
     }
 }

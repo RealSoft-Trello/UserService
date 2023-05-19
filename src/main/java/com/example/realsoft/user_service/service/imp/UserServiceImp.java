@@ -1,5 +1,6 @@
 package com.example.realsoft.user_service.service.imp;
 
+import com.example.realsoft.user_service.model.Board;
 import com.example.realsoft.user_service.entity.User;
 import com.example.realsoft.user_service.exception.ResourceNotFound;
 import com.example.realsoft.user_service.model.UserRequest;
@@ -9,7 +10,11 @@ import com.example.realsoft.user_service.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final RestTemplate restTemplate;
     @Override
     public UserResponse getUserById(Long userId) throws ResourceNotFound {
         log.info("Getting a user from DB with id {}", userId);
@@ -49,6 +55,26 @@ public class UserServiceImp implements UserService {
         return userRepository.findAll().stream()
                 .map(user -> modelMapper.map(user, UserResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Board> getBoardsById(Long userId) throws ResourceNotFound {
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            log.error("User with id {} not found in DB", userId);
+            throw new ResourceNotFound("User", "Id", userId.toString());
+        }
+
+        String boardsUrl = "http://board-service/realsoft/trello/boards/user/" + userId;
+        ResponseEntity<List<Board>> response = restTemplate.exchange(
+                boardsUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Board>>() {}
+        );
+        log.info("Response {} ", response.getBody());
+        List<Board> boards = response.getBody();
+        return boards;
     }
 
     private User findUser(Long userId) throws ResourceNotFound {
