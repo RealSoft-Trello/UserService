@@ -10,7 +10,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class Board {
+public class BoardDto {
     private Long boardId;
     private String title;
     private Long userId;

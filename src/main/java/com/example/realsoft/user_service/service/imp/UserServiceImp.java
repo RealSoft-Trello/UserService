@@ -1,8 +1,9 @@
 package com.example.realsoft.user_service.service.imp;
 
-import com.example.realsoft.user_service.model.Board;
+import com.example.realsoft.user_service.model.BoardDto;
 import com.example.realsoft.user_service.entity.User;
 import com.example.realsoft.user_service.exception.ResourceNotFound;
+import com.example.realsoft.user_service.model.CommentDto;
 import com.example.realsoft.user_service.model.UserRequest;
 import com.example.realsoft.user_service.model.UserResponse;
 import com.example.realsoft.user_service.repository.UserRepository;
@@ -58,7 +59,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<Board> getBoardsById(Long userId) throws ResourceNotFound {
+    public List<BoardDto> getBoardsById(Long userId) throws ResourceNotFound {
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             log.error("User with id {} not found in DB", userId);
@@ -66,15 +67,33 @@ public class UserServiceImp implements UserService {
         }
 
         String boardsUrl = "http://board-service/realsoft/trello/boards/user/" + userId;
-        ResponseEntity<List<Board>> response = restTemplate.exchange(
+        ResponseEntity<List<BoardDto>> response = restTemplate.exchange(
                 boardsUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Board>>() {}
+                new ParameterizedTypeReference<List<BoardDto>>() {}
         );
         log.info("Response {} ", response.getBody());
-        List<Board> boards = response.getBody();
+        List<BoardDto> boards = response.getBody();
         return boards;
+    }
+
+    @Override
+    public List<CommentDto> getCommentsById(Long userId) throws ResourceNotFound {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            log.error("User with id {} not found in DB", userId);
+            throw new ResourceNotFound("User", "Id", userId.toString());
+        }
+        String commentsUrl = "http://comment-service/realsoft/trello/comments/user/" + userId;
+        ResponseEntity<List<CommentDto>> response = restTemplate.exchange(
+                commentsUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CommentDto>>() {}
+        );
+
+        return response.getBody();
     }
 
     private User findUser(Long userId) throws ResourceNotFound {

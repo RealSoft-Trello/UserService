@@ -1,7 +1,8 @@
 package com.example.realsoft.user_service.controller;
 
-import com.example.realsoft.user_service.model.Board;
+import com.example.realsoft.user_service.model.BoardDto;
 import com.example.realsoft.user_service.exception.ResourceNotFound;
+import com.example.realsoft.user_service.model.CommentDto;
 import com.example.realsoft.user_service.model.UserRequest;
 import com.example.realsoft.user_service.model.UserResponse;
 import com.example.realsoft.user_service.service.UserService;
@@ -40,7 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}/boards" )
-    public ResponseEntity<List<Board>> getBoardsById(@PathVariable(name = "id" ) Long userId) throws ResourceNotFound {
+    public ResponseEntity<List<BoardDto>> getBoardsById(@PathVariable(name = "id" ) Long userId) throws ResourceNotFound {
         return ResponseEntity.ok(userService.getBoardsById(userId));
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentDto>> getCommentsById(@PathVariable(name = "id") Long userId) throws ResourceNotFound {
+        return ResponseEntity.ok(userService.getCommentsById(userId));
     }
 }
